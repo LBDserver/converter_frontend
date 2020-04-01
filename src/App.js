@@ -13,7 +13,7 @@ function App() {
           <a href="https://github.com/KhronosGroup/COLLADA2GLTF/" target="_blank" rel="noopener noreferrer"> COLLADA2GLTF</a> (KhronosGroup),
           <a href="https://github.com/pipauwel/IFCtoRDF" target="_blank" rel="noopener noreferrer"> IFCtoRDF</a> (Pieter Pauwels) and 
           <a href="https://github.com/jyrkioraskari/IFCtoLBD" target="_blank" rel="noopener noreferrer"> IFCtoLBD</a> (Jyrki Oraskari).
-        Your email address will only be used to send you an e-mail when the conversion is ready. 
+        An example file (ifcDuplex) can be downloaded <a href={process.env.PUBLIC_URL + '/duplex.ifc'}>here</a>.
       </p>
       <FormComponent />
     </div>

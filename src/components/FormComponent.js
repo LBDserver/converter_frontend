@@ -3,7 +3,8 @@ import {
     Form,
     Row,
     Col,
-    Button
+    Button,
+    Alert
 } from 'react-bootstrap'
 
 const axios = require('axios')
@@ -16,11 +17,13 @@ export default class FormComponent extends Component {
                 LBD: { checked: false, fields: { baseUri: '', fileName: '' } },
                 ifcOWL: { checked: false },
                 GLTF: { checked: false },
-                DAE: { checked: false },
-                XML: { checked: false }
+                DAE: { checked: false }
             },
             checked: [],
-            email: "jeroen.werbrouck@hotmail.com"
+            converted: false,
+            conversionUrls: [],
+            error: false,
+            baseUri: "http://www.example.com/lbdconversion/"
         }
     }
 
@@ -44,16 +47,16 @@ export default class FormComponent extends Component {
     }
 
     setExtension = (c) => {
-        switch(c) {
-            case("LBD"):
-            case("ifcOWL"):
-                return('.ttl');
-            case("GLTF"):
-                return('.gltf');
-            case("DAE"):
-                return('.dae');
-            case("XML"):
-                return('.xml');
+        switch (c) {
+            case ("LBD"):
+            case ("ifcOWL"):
+                return ('.ttl');
+            case ("GLTF"):
+                return ('.gltf');
+            case ("DAE"):
+                return ('.dae');
+            case ("XML"):
+                return ('.xml');
             default:
                 break;
         }
@@ -64,47 +67,83 @@ export default class FormComponent extends Component {
 
         const formData = new FormData()
         formData.append("ifcFile", this.state.files, this.state.files.name)
-
-        for (const conv of this.state.checked) {
-            axios.post(`http://localhost:4800/IFCto${conv === 'ifcOWL' ? 'OWL' : conv}`, formData)
-                .then((res) => {
-                    return res.data
-                })
-                .then((blob) => {
-                    console.log(typeof blob)
-                    if (typeof blob == 'object') {
-                        blob = JSON.stringify(blob)
-                        console.log(blob)
-                    }
-                    const url = window.URL.createObjectURL(new Blob([blob]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute('download', `conversion${this.setExtension(conv)}`);
-
-                    link.click()
-                })
-                .catch((error) => console.log('error', error))
+        formData.append("conversions", JSON.stringify(this.state.checked))
+        if (this.state.checked.includes('LBD')) {
+            formData.append("baseUri", this.state.baseUri)
         }
 
+        // for (const conv of this.state.checked) {
+        // axios.post(`http://localhost:4800/IFCto${conv === 'ifcOWL' ? 'OWL' : conv}`, formData)
+        this.setState({ processing: true })
+        axios.post(`http://localhost:4800/multiple`, formData, {
+            responseType: 'arraybuffer',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        })
+            .then((res) => {
+                const disposition = res.request.getResponseHeader('Content-Disposition')
+                var fileName = "";
+                var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                var matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                    fileName = matches[1].replace(/['"]/g, '');
+                }
+                let blob = new Blob([res.data], { type: 'application/zip' })
+
+                const conversionUrl = URL.createObjectURL(blob)
+                let conversionUrls = this.state.conversionUrls
+                conversionUrls.push(conversionUrl)
+                this.setState({ converted: true, conversionUrls, processing: false })
+            })
+            .catch((error) => {
+                this.setState({ error: error.message, processing: false })
+            })
+        // }
+
     }
 
-    onChange = (e) => {
-        this.setState({ email: e.target.value })
+    onChangeBaseUri = (e) => {
+        let baseUri = e.target.value
+        if (baseUri.slice(-1) !== '/') {
+            baseUri = baseUri + '/'
+        }
+        this.setState({ baseUri })
     }
+
+
 
     render() {
+
+        let downloadButton, error, baseUri
+
+        downloadButton = this.state.conversionUrls.map(url => {
+            return <Alert variant="success" onClose={() => this.setState({ conversionUrls: this.state.conversionUrls.filter((v) => v !== url) })} dismissible>
+                Your ZIP file is now ready! Click <Alert.Link href={url}>here</Alert.Link> to download
+        </Alert>
+        })
+
+        if (this.state.error) {
+            error = <Alert variant="danger" onClose={() => this.setState({ error: false })} dismissible>
+                <Alert.Heading>Oh snap! A conversion error occured!</Alert.Heading>
+                <p>
+                    {this.state.error}
+                </p>
+            </Alert>
+        }
+
+        if (this.state.checked.includes('LBD')) {
+            baseUri = <Form.Group as={Row} controlId="formBaseUri">
+                <Form.Label column sm="2">Base URI</Form.Label>
+                <Col sm="10">
+                    <Form.Control type="text" name="text" placeholder="http://www.example.com/lbdconversion/" onChange={this.onChangeBaseUri} />
+                </Col>
+            </Form.Group>
+        }
+
         return (
             <div>
                 <Form onSubmit={this.submitForm}>
-                    <Form.Group as={Row} controlId="formName">
-                        <Form.Label column sm="2">E-mail</Form.Label>
-                        <Col sm="10">
-                            <Form.Control type="email" name="email" defaultValue={this.state.email} placeholder="Email address" onChange={this.onChange} />
-                            <Form.Text className="text-muted">
-                                Your email will not be cached by LBDserver and will be removed after the conversion has taken place.
-                        </Form.Text>
-                        </Col>
-                    </Form.Group>
                     <Form.Group as={Row} controlId="formFile">
                         <Form.Label column sm="2">IFC File</Form.Label>
                         <br />
@@ -114,7 +153,7 @@ export default class FormComponent extends Component {
                                 name="file"
                                 accept=".ifc"
                                 onChange={this.setFile}
-                                style={{ marginTop: 8 }}
+                                style={{ marginTop: 2 }}
                             />
                         </Col>
                     </Form.Group>
@@ -137,12 +176,18 @@ export default class FormComponent extends Component {
                             ))}
                         </Col>
                     </Form.Group>
+                    {baseUri}
                     <hr />
-                    {/* {options} */}
-
-                    <Button variant="primary" type="submit" disabled={this.state.files && this.state.email && this.state.checked.length > 0 ? false : true}>
-                        Start conversion
+                    <Button variant="dark" type="submit" disabled={this.state.files && this.state.checked.length && !this.state.processing > 0 ? false : true}>
+                        {this.state.processing ? "Processing" : "Start Conversion"}
                     </Button>
+                    <div style={{ marginTop: "20px" }}>
+                        {downloadButton}
+                    </div>
+
+                    <div style={{ marginTop: "20px" }}>
+                        {error}
+                    </div>
                 </Form>
             </div>
         )
