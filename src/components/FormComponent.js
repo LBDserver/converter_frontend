@@ -116,7 +116,7 @@ export default class FormComponent extends Component {
         let downloadButton, error, baseUri
 
         downloadButton = this.state.conversionUrls.map(url => {
-            return <Alert variant="success" onClose={() => this.setState({ conversionUrls: this.state.conversionUrls.filter((v) => v !== url) })} dismissible>
+            return <Alert key={url} variant="success" onClose={() => this.setState({ conversionUrls: this.state.conversionUrls.filter((v) => v !== url) })} dismissible>
                 Your ZIP file is now ready! Click <Alert.Link href={url}>here</Alert.Link> to download
         </Alert>
         })

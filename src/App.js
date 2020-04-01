@@ -8,7 +8,7 @@ function App() {
       <h1>IFC Conversion GUI</h1>
       <p>
         This is a graphical user interface to convert your IFC file using the LBDserver conversion API.
-        The API convertor relies on multiple existing conversion tools, such as 
+        The converter relies on multiple existing tools, such as 
           <a href="http://ifcopenshell.org/ifcconvert" target="_blank" rel="noopener noreferrer"> IfcConvert</a> (Thomas Krijnen), 
           <a href="https://github.com/KhronosGroup/COLLADA2GLTF/" target="_blank" rel="noopener noreferrer"> COLLADA2GLTF</a> (KhronosGroup),
           <a href="https://github.com/pipauwel/IFCtoRDF" target="_blank" rel="noopener noreferrer"> IFCtoRDF</a> (Pieter Pauwels) and 
