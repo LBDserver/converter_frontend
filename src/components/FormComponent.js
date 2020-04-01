@@ -72,10 +72,8 @@ export default class FormComponent extends Component {
             formData.append("baseUri", this.state.baseUri)
         }
 
-        // for (const conv of this.state.checked) {
-        // axios.post(`http://localhost:4800/IFCto${conv === 'ifcOWL' ? 'OWL' : conv}`, formData)
         this.setState({ processing: true })
-        axios.post(`http://localhost:4800/multiple`, formData, {
+        axios.post(`http://localhost:4800/convert`, formData, {
             responseType: 'arraybuffer',
             headers: {
                 'Content-Type': 'multipart/form-data',
