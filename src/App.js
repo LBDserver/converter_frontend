@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FormComponent } from './components'
+import {Link} from 'react-router-dom'
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
           <a href="https://github.com/KhronosGroup/COLLADA2GLTF/" target="_blank" rel="noopener noreferrer"> COLLADA2GLTF</a> (KhronosGroup),
           <a href="https://github.com/pipauwel/IFCtoRDF" target="_blank" rel="noopener noreferrer"> IFCtoRDF</a> (Pieter Pauwels) and 
           <a href="https://github.com/jyrkioraskari/IFCtoLBD" target="_blank" rel="noopener noreferrer"> IFCtoLBD</a> (Jyrki Oraskari).
-        An example file (ifcDuplex) can be downloaded <a href={process.env.PUBLIC_URL + '/duplex.ifc'}>here</a>.
+        An example file (ifcDuplex) can be downloaded <a href={process.env.PUBLIC_URL + '/duplex.ifc'}>here</a>. 
+        You can also use the <Link to="/docs">API</Link>. 
       </p>
       <FormComponent />
     </div>

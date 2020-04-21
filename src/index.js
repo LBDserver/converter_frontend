@@ -4,10 +4,22 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(
+import { Route, BrowserRouter as Router } from 'react-router-dom'
+import {ApiComponent} from './components';
+
+const routing = (
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+    <Router>
+      <div>
+        <Route exact path="/" component={App} />
+        <Route path="/docs" component={ApiComponent} />
+      </div>
+    </Router>
+  </React.StrictMode>
+)
+
+ReactDOM.render(
+  routing,
   document.getElementById('root')
 );
 

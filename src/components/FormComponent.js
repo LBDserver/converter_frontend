@@ -68,7 +68,7 @@ export default class FormComponent extends Component {
         const formData = new FormData()
         formData.append("ifcFile", this.state.files, this.state.files.name)
         formData.append("conversions", JSON.stringify(this.state.checked))
-        if (this.state.checked.includes('LBD')) {
+        if (this.state.checked.includes('LBD') || this.state.checked.includes('ifcOWL')) {
             formData.append("baseUri", this.state.baseUri)
         }
 
@@ -80,6 +80,7 @@ export default class FormComponent extends Component {
             }
         })
             .then((res) => {
+                console.log('res', res)
                 const disposition = res.request.getResponseHeader('Content-Disposition')
                 var fileName = "";
                 var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
@@ -130,11 +131,11 @@ export default class FormComponent extends Component {
             </Alert>
         }
 
-        if (this.state.checked.includes('LBD')) {
+        if (this.state.checked.includes('LBD') || this.state.checked.includes('ifcOWL')) {
             baseUri = <Form.Group as={Row} controlId="formBaseUri">
                 <Form.Label column sm="2">Base URI</Form.Label>
                 <Col sm="10">
-                    <Form.Control type="text" name="text" placeholder="http://www.example.com/lbdconversion/" onChange={this.onChangeBaseUri} />
+                    <Form.Control type="url" name="text" placeholder="http://www.example.com/lbdconversion/" onChange={this.onChangeBaseUri} />
                 </Col>
             </Form.Group>
         }
