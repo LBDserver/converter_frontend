@@ -13,6 +13,6 @@ Open console and run:
 ## What can this web-app do
 After starting the server, a local web application starts that allows converting IFC to a number of other data formats:
 
-![interface](img/interface.png.png "Interface of LBD converter tool")
+![interface](img/interface.png "Interface of LBD converter tool")
 
 
