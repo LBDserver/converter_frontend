@@ -1,4 +1,4 @@
-# Online open converter tool for IFC files
+# Online open converter tool for IFC files - frontend interface
 
 ## Before installation
 You need:
