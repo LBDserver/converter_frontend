@@ -1,4 +1,5 @@
 # Online open converter tool for IFC files - frontend interface
+This is an online JS-based frontend that gives a simple interface for converting IFC files to a number of other formats.
 
 ## Before installation
 You need:
