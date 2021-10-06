@@ -1,0 +1,77 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a simple API for converting IFC EXPRESS files to different formats, using existing converters such as IFCconvert, COLLADA2GLTF, IFCtoRDF and IFCtoLBD.",
+    "version": "1.0.0",
+    "title": "IFCconversion API",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost:4800",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/convert": {
+      "post": {
+        "tags": [
+          "convert"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "file",
+              "example": "filename=attachment.zip"
+            }
+          }
+        },
+        "summary": "Converts an IFC Express file to various other formats",
+        "description": "",
+        "operationId": "convertIFC",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/zip"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "ifcFile",
+            "description": "IFC Express file to upload (must have extension .ifc)",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "conversions",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "DAE",
+                "ifcOWL",
+                "GLTF",
+                "LBD"
+              ]
+            },
+            "description": "Array with the conversions to perform",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "baseUri",
+            "description": "BaseURI, only required for the conversion to Linked Building Data (LBD)",
+            "required": false,
+            "type": "string",
+            "format": "uri"
+          }
+        ]
+      }
+    }
+  }
+}
