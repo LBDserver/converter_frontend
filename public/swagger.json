@@ -9,7 +9,7 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host": "localhost:4800",
+  "host": "92.205.26.150:4800",
   "basePath": "/",
   "schemes": [
     "http"
